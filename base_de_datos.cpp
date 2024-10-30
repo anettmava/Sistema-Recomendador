@@ -11,6 +11,7 @@ struct Libro {
     int id;
     string title;
     string author;
+    string genre;
     float average_rating;
     int num_page;
     int ratings_count;
@@ -21,6 +22,7 @@ struct Libro {
         os << "ID: " << libro.id << "\n"
            << "Titulo: " << libro.title << "\n"
            << "Autor: " << libro.author << "\n"
+           << "Genero: " << libro.genre << "\n"
            << "Calificacion promedio: " << libro.average_rating << "\n"
            << "Numero de paginas: " << libro.num_page << "\n"
            << "Numero de calificaciones: " << libro.ratings_count << "\n"
@@ -30,10 +32,20 @@ struct Libro {
     }
 };
 
-void loadDataIntoArray(const string& filename, DynamicArray<Libro>& arr) {
+string cleanString(const string& str) { //Se tuvo que recurrir a esta funcion para limpiar los caracteres ya que al parecer algunos tenian caracteres invisibles
+    string cleaned;
+    for (char c : str) {
+        if (isdigit(c)) {
+            cleaned += c;  // Solo agrega caracteres numéricos
+        }
+    }
+    return cleaned;
+}
 
+void loadDataIntoArray(const string& filename, DynamicArray<Libro>& arr) {
     ifstream file(filename);
     string line;
+    int lineNumber = 0;  // Contador para el número de línea
 
     if (!file) {
         cerr << "Error al abrir el archivo" << endl;
@@ -41,16 +53,20 @@ void loadDataIntoArray(const string& filename, DynamicArray<Libro>& arr) {
     }
 
     while (getline(file, line)) {
+
         stringstream ss(line);
         string temp;
         Libro libro;
 
         getline(ss, temp, ',');
-        libro.id = std::stoi(temp);
+        temp = cleanString(temp);  // Limpia el ID de caracteres invisibles
+        libro.id = stoi(temp);
 
         getline(ss, libro.title, ',');
 
         getline(ss, libro.author, ',');
+
+        getline(ss, libro.genre, ',');
 
         getline(ss, temp, ',');
         libro.average_rating = stof(temp);
@@ -86,11 +102,14 @@ void loadDataIntoLinkedList(const string& filename, LinkedList<Libro>& list) {
         Libro libro;
 
         getline(ss, temp, ',');
+        temp = cleanString(temp);
         libro.id = std::stoi(temp);
 
         getline(ss, libro.title, ',');
 
         getline(ss, libro.author, ',');
+
+        getline(ss, libro.genre, ',');
 
         getline(ss, temp, ',');
         libro.average_rating = stof(temp);
@@ -126,11 +145,14 @@ void loadDataIntoDoublyLinkedList(const string& filename, DoublyLinkedList<Libro
         Libro libro;
 
         getline(ss, temp, ',');
+        temp = cleanString(temp);
         libro.id = std::stoi(temp);
 
         getline(ss, libro.title, ',');
 
         getline(ss, libro.author, ',');
+
+        getline(ss, libro.genre, ',');
 
         getline(ss, temp, ',');
         libro.average_rating = stof(temp);
@@ -203,13 +225,13 @@ void buscarPorID(const DynamicArray<Libro>& arr, int id) {
 int main()
 {
     DynamicArray<Libro> ejemplo;
-    loadDataIntoArray("libros.csv", ejemplo);
+    loadDataIntoArray("libro_final.csv", ejemplo);
 
     LinkedList<Libro> ejemplo1;
-    loadDataIntoLinkedList("libros.csv", ejemplo1);
+    loadDataIntoLinkedList("libro_final.csv", ejemplo1);
 
     DoublyLinkedList<Libro> ejemplo2;
-    loadDataIntoDoublyLinkedList("libros.csv", ejemplo2);
+    loadDataIntoDoublyLinkedList("libro_final.csv", ejemplo2);
 
     int id_search;
     cout << "Ingresa el ID del libro que deseas buscar: ";
